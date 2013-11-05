@@ -9,7 +9,7 @@ module ISO8583
     attr_accessor :codec
     attr_accessor :padding
     attr_accessor :max
-
+    attr_accessor :zero_pad_right
     attr_writer   :name
     attr_accessor :bmp
 
@@ -27,7 +27,7 @@ module ISO8583
                    raise ISO8583Exception.new("Cannot determine the length of '#{name}' field")
                  end
 
-      len = (len/2)+1 if length.kind_of?(BCDField)
+      len=((len % 2) != 0 ? (len / 2) + 1 : len / 2) if length.kind_of?(BCDField)
 
       raw_value = raw[0,len]
       
@@ -42,6 +42,10 @@ module ISO8583
         real_value = codec.decode(raw_value)
       rescue
         raise ISO8583ParseException.new($!.message+" (#{name})")
+      end
+      if length.kind_of?(BCDField) && zero_pad_right?
+        stringform=real_value.to_s
+        real_value = stringform.chop.to_i if stringform.length == original_len+1 && stringform.ends_with?("0")
       end
 
       [ real_value, rest ]
