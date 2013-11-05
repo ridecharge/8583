@@ -27,6 +27,8 @@ module ISO8583
                    raise ISO8583Exception.new("Cannot determine the length of '#{name}' field")
                  end
 
+      len = (len/2)+1 if length.kind_of?(BCDField)
+
       raw_value = raw[0,len]
       
       # make sure we have enough data ...
@@ -83,8 +85,13 @@ module ISO8583
     # content length. E.g. 123 (length = 3) encodes to "\x01\x23" (length 2)
     def length
       _length = super
-      (_length % 2) != 0 ? (_length / 2) + 1 : _length / 2
+      if (_length.kind_of?(Fixnum))
+        return ((_length % 2) != 0 ? (_length / 2) + 1 : _length / 2)
+      else
+        return _length
+      end
     end
   end
+
 
 end
