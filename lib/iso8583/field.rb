@@ -26,7 +26,7 @@ module ISO8583
                  else
                    raise ISO8583Exception.new("Cannot determine the length of '#{name}' field")
                  end
-
+      original_len = len
       len=((len % 2) != 0 ? (len / 2) + 1 : len / 2) if length.kind_of?(BCDField)
 
       raw_value = raw[0,len]
@@ -43,7 +43,7 @@ module ISO8583
       rescue
         raise ISO8583ParseException.new($!.message+" (#{name})")
       end
-      if length.kind_of?(BCDField) && zero_pad_right == true
+      if length.kind_of?(BCDField) && length.zero_pad_right == true
         stringform=real_value.to_s
         real_value = stringform.chop.to_i if stringform.length == original_len+1 && stringform.ends_with?("0")
       end
