@@ -10,6 +10,7 @@ module ISO8583
     attr_accessor :padding
     attr_accessor :max
     attr_accessor :zero_pad_right
+    attr_accessor :full_size
     attr_writer   :name
     attr_accessor :bmp
 
@@ -27,10 +28,9 @@ module ISO8583
                    raise ISO8583Exception.new("Cannot determine the length of '#{name}' field")
                  end
       original_len = len
-      len=((len % 2) != 0 ? (len / 2) + 1 : len / 2) if length.kind_of?(BCDField)
+      len=((len % 2) != 0 ? (len / 2) + 1 : len / 2) if length.kind_of?(BCDField) && full_size.nil?
 
       raw_value = raw[0,len]
-      
       # make sure we have enough data ...
       if raw_value.length != len
         mes = "Field has incorrect length! field: #{raw_value} len/expected: #{raw_value.length}/#{len}"
@@ -45,7 +45,7 @@ module ISO8583
       end
       if length.kind_of?(BCDField) && length.zero_pad_right == true
         stringform=real_value.to_s
-        real_value = stringform.chop.to_i if stringform.length == original_len+1 && stringform.ends_with?("0")
+        real_value = stringform.chop if stringform.length == original_len+1 && stringform.ends_with?("0")
       end
 
       [ real_value, rest ]
