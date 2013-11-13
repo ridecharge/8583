@@ -44,8 +44,10 @@ module ISO8583
         raise ISO8583ParseException.new($!.message+" (#{name})")
       end
       if length.kind_of?(BCDField) && length.zero_pad_right == true
+        is_num = real_value.kind_of?(Fixnum)
         stringform=real_value.to_s
-        real_value = stringform.chop.to_i if stringform.length == original_len+1 && stringform.ends_with?("0")
+        real_value = stringform.chop if stringform.length == original_len+1 && stringform.ends_with?("0")
+        real_value = real_value.to_i if is_num && real_value.kind_of?(String)
       end
 
       [ real_value, rest ]
