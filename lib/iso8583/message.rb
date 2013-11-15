@@ -345,7 +345,7 @@ module ISO8583
         bmp,rest = Bitmap.parse(rest)
         bmp.each {|bit|
           bmp_def      = _definitions[bit]
-          value, rest  = bmp_def.field.parse(rest)
+          value, rest  = bmp_def.field.parse(rest, message)
           message[bit] = value
         }
         message

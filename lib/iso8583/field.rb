@@ -18,7 +18,7 @@ module ISO8583
       "BMP #{bmp}: #{@name}"
     end
 
-    def parse(raw)
+    def parse(raw, message=nil)
       len, raw = case length
                  when Fixnum
                    [length, raw]
@@ -39,7 +39,7 @@ module ISO8583
 
       rest = raw[len, raw.length]
       begin
-        real_value = codec.decode(raw_value)
+        real_value = codec.decode(raw_value, message)
       rescue
         raise ISO8583ParseException.new($!.message+" (#{name})")
       end

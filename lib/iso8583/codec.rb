@@ -69,8 +69,12 @@ module ISO8583
     attr_accessor :encoder
     attr_accessor :decoder
 
-    def decode(raw)
-      decoder.call(raw)
+    def decode(raw, message=nil)
+      if decoder.arity == 2
+        decoder.call(raw, message)
+      else
+        decoder.call(raw)
+      end
     end
 
     # length is either a fixnum or a lenth encoder.
