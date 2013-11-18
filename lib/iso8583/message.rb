@@ -339,8 +339,11 @@ module ISO8583
       end
       
       # Parse the bytes `str` returning a message of the defined type.
-      def parse(str)
+      def parse(str, attributes=nil)
         message = self.new
+        unless attributes.nil?
+          attributes.each{|attribute, value| self.send("#{attribute}=".to_sym, value)}
+        end
         message.mti, rest = _mti_format.parse(str)
         bmp,rest = Bitmap.parse(rest)
         bmp.each {|bit|
