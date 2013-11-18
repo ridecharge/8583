@@ -342,7 +342,7 @@ module ISO8583
       def parse(str, attributes=nil)
         message = self.new
         unless attributes.nil?
-          attributes.each{|attribute, value| self.send("#{attribute}=".to_sym, value)}
+          attributes.each{|attribute, value| message.send("#{attribute}=".to_sym, value)}
         end
         message.mti, rest = _mti_format.parse(str)
         bmp,rest = Bitmap.parse(rest)
